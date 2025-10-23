@@ -1,11 +1,19 @@
 package ru.practicum.shareit.item;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Component
+@RequiredArgsConstructor
 public class ItemMapper {
-    public static ItemDto toItemDto(Item item) {
+    public ItemDto toDto(Item item) {
         if (item == null) {
             return null;
         }
@@ -18,7 +26,16 @@ public class ItemMapper {
         );
     }
 
-    public static Item toItem(ItemDto itemDto) {
+    public List<ItemDto> toDto(Collection<Item> items) {
+        if (items == null) {
+            return null;
+        }
+        return items.stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public Item toEntity(ItemDto itemDto) {
         if (itemDto == null) {
             return null;
         }
@@ -30,8 +47,8 @@ public class ItemMapper {
         return item;
     }
 
-    public static Item toItemWithOwner(ItemDto itemDto, User owner) {
-        Item item = toItem(itemDto);
+    public Item toEntityWithOwner(ItemDto itemDto, User owner) {
+        Item item = toEntity(itemDto);
         if (item != null) {
             item.setOwner(owner);
         }

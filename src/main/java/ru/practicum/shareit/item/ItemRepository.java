@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item;
 
-import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
@@ -18,9 +17,5 @@ public interface ItemRepository {
     List<Item> findByOwnerId(Long ownerId);
 
     List<Item> searchByText(String text);
-
-    Comment saveComment(Comment comment);
-
-    List<Comment> findCommentsByItemId(Long itemId);
 }
 

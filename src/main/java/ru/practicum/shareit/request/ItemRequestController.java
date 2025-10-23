@@ -19,26 +19,27 @@ import java.util.stream.Collectors;
 public class ItemRequestController {
     private final ItemRequestService itemRequestService;
     private final ItemService itemService;
+    private final ItemRequestMapper itemRequestMapper;
+    private final ItemMapper itemMapper;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ItemRequestDto createRequest(@RequestHeader("X-Sharer-User-Id") Long userId,
                                         @Valid @RequestBody ItemRequestDto itemRequestDto) {
-        ItemRequest itemRequest = ItemRequestMapper.toItemRequest(itemRequestDto);
+        ItemRequest itemRequest = itemRequestMapper.toEntity(itemRequestDto);
         ItemRequest created = itemRequestService.create(itemRequest, userId);
-        return ItemRequestMapper.toItemRequestDto(created, Collections.emptyList());
+        return itemRequestMapper.toDto(created, Collections.emptyList());
     }
 
     @GetMapping
     public List<ItemRequestDto> getOwnRequests(@RequestHeader("X-Sharer-User-Id") Long userId) {
         return itemRequestService.findByRequestorId(userId).stream()
                 .map(request -> {
-                    List<ItemDto> items = itemService.allItems().stream()
+                    List<ItemDto> items = itemMapper.toDto(itemService.allItems().stream()
                             .filter(item -> item.getRequest() != null &&
                                     item.getRequest().getId().equals(request.getId()))
-                            .map(ItemMapper::toItemDto)
-                            .collect(Collectors.toList());
-                    return ItemRequestMapper.toItemRequestDto(request, items);
+                            .collect(Collectors.toList()));
+                    return itemRequestMapper.toDto(request, items);
                 })
                 .collect(Collectors.toList());
     }
@@ -47,12 +48,11 @@ public class ItemRequestController {
     public List<ItemRequestDto> getAllRequests(@RequestHeader("X-Sharer-User-Id") Long userId) {
         return itemRequestService.findAllExceptUser(userId).stream()
                 .map(request -> {
-                    List<ItemDto> items = itemService.allItems().stream()
+                    List<ItemDto> items = itemMapper.toDto(itemService.allItems().stream()
                             .filter(item -> item.getRequest() != null &&
                                     item.getRequest().getId().equals(request.getId()))
-                            .map(ItemMapper::toItemDto)
-                            .collect(Collectors.toList());
-                    return ItemRequestMapper.toItemRequestDto(request, items);
+                            .collect(Collectors.toList()));
+                    return itemRequestMapper.toDto(request, items);
                 })
                 .collect(Collectors.toList());
     }
@@ -62,13 +62,12 @@ public class ItemRequestController {
                                       @PathVariable Long requestId) {
         ItemRequest itemRequest = itemRequestService.getRequest(requestId);
 
-        List<ItemDto> items = itemService.allItems().stream()
+        List<ItemDto> items = itemMapper.toDto(itemService.allItems().stream()
                 .filter(item -> item.getRequest() != null &&
                         item.getRequest().getId().equals(requestId))
-                .map(ItemMapper::toItemDto)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
 
-        return ItemRequestMapper.toItemRequestDto(itemRequest, items);
+        return itemRequestMapper.toDto(itemRequest, items);
     }
 }
 

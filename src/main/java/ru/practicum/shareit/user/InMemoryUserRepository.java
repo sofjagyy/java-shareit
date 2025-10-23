@@ -1,6 +1,5 @@
 package ru.practicum.shareit.user;
 
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exception.DuplicateException;
 import ru.practicum.shareit.exception.NotFoundException;
@@ -10,7 +9,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
-@Component("InMemoryUserRepository")
 public class InMemoryUserRepository implements UserRepository {
     private final Map<Long, User> users = new ConcurrentHashMap<>();
     private final AtomicLong currentId = new AtomicLong(1L);

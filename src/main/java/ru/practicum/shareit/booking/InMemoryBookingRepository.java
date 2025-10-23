@@ -1,7 +1,6 @@
 package ru.practicum.shareit.booking;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
@@ -11,7 +10,6 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Repository
-@Component("InMemoryBookingRepository")
 public class InMemoryBookingRepository implements BookingRepository {
     private final Map<Long, Booking> bookings = new ConcurrentHashMap<>();
     private final AtomicLong currentId = new AtomicLong(1L);

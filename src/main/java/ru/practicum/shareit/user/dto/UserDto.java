@@ -5,23 +5,17 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.practicum.shareit.validation.ValidationGroups;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDto {
     private Long id;
-    @NotBlank(groups = Create.class, message = "Имя не может быть пустым")
+    @NotBlank(groups = ValidationGroups.Create.class, message = "Имя не может быть пустым")
     private String name;
-    @NotBlank(groups = Create.class, message = "Email не может быть пустым")
-    @Email(groups = {Create.class, Update.class}, message = "Email должен быть корректным")
+    @NotBlank(groups = ValidationGroups.Create.class, message = "Email не может быть пустым")
+    @Email(groups = {ValidationGroups.Create.class, ValidationGroups.Update.class}, message = "Email должен быть корректным")
     private String email;
-
-    public interface Create {
-    }
-
-    public interface Update {
-    }
-    
 }
 

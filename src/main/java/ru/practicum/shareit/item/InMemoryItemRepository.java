@@ -1,10 +1,8 @@
 package ru.practicum.shareit.item;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.*;
@@ -14,12 +12,9 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Repository
-@Component("InMemoryItemRepository")
 public class InMemoryItemRepository implements ItemRepository {
     private final Map<Long, Item> items = new ConcurrentHashMap<>();
     private final AtomicLong currentId = new AtomicLong(1L);
-    private final Map<Long, Comment> comments = new ConcurrentHashMap<>();
-    private final AtomicLong currentCommentId = new AtomicLong(1L);
 
     @Override
     public Item save(Item item) {
@@ -68,22 +63,6 @@ public class InMemoryItemRepository implements ItemRepository {
                 .filter(item -> Boolean.TRUE.equals(item.getAvailable()))
                 .filter(item -> item.getName().toLowerCase().contains(lowerText) ||
                         item.getDescription().toLowerCase().contains(lowerText))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public Comment saveComment(Comment comment) {
-        if (comment.getId() == null) {
-            comment.setId(currentCommentId.getAndIncrement());
-        }
-        comments.put(comment.getId(), comment);
-        return comment;
-    }
-
-    @Override
-    public List<Comment> findCommentsByItemId(Long itemId) {
-        return comments.values().stream()
-                .filter(comment -> comment.getItem() != null && comment.getItem().getId().equals(itemId))
                 .collect(Collectors.toList());
     }
 }

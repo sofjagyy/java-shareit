@@ -1,7 +1,6 @@
 package ru.practicum.shareit.request;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
@@ -11,7 +10,6 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Repository
-@Component("InMemoryItemRequestRepository")
 public class InMemoryItemRequestRepository implements ItemRequestRepository {
     private final Map<Long, ItemRequest> requests = new ConcurrentHashMap<>();
     private final AtomicLong currentId = new AtomicLong(1L);

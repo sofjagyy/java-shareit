@@ -93,46 +93,46 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<Booking> findByBookerId(Long bookerId, String state) {
+    public List<Booking> findByBookerId(Long bookerId, BookingState state) {
         List<Booking> bookings = bookingRepository.findByBookerId(bookerId);
         return filterByState(bookings, state);
     }
 
     @Override
-    public List<Booking> findByOwnerId(Long ownerId, String state) {
+    public List<Booking> findByOwnerId(Long ownerId, BookingState state) {
         List<Booking> bookings = bookingRepository.findByOwnerId(ownerId);
         return filterByState(bookings, state);
     }
 
-    private List<Booking> filterByState(List<Booking> bookings, String state) {
+    private List<Booking> filterByState(List<Booking> bookings, BookingState state) {
         LocalDateTime now = LocalDateTime.now();
 
-        if (state == null || state.isBlank()) {
-            state = "ALL";
+        if (state == null) {
+            state = BookingState.ALL;
         }
 
-        switch (state.toUpperCase()) {
-            case "CURRENT":
+        switch (state) {
+            case CURRENT:
                 return bookings.stream()
                         .filter(b -> b.getStart().isBefore(now) && b.getEnd().isAfter(now))
                         .collect(Collectors.toList());
-            case "PAST":
+            case PAST:
                 return bookings.stream()
                         .filter(b -> b.getEnd().isBefore(now))
                         .collect(Collectors.toList());
-            case "FUTURE":
+            case FUTURE:
                 return bookings.stream()
                         .filter(b -> b.getStart().isAfter(now))
                         .collect(Collectors.toList());
-            case "WAITING":
+            case WAITING:
                 return bookings.stream()
                         .filter(b -> b.getStatus() == Status.WAITING)
                         .collect(Collectors.toList());
-            case "REJECTED":
+            case REJECTED:
                 return bookings.stream()
                         .filter(b -> b.getStatus() == Status.REJECTED)
                         .collect(Collectors.toList());
-            case "ALL":
+            case ALL:
             default:
                 return bookings;
         }

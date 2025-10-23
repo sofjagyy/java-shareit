@@ -8,9 +8,11 @@ import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.Status;
 import ru.practicum.shareit.exception.ForbiddenException;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.item.dto.CommentDto;
+import ru.practicum.shareit.item.comment.Comment;
+import ru.practicum.shareit.item.comment.CommentDto;
+import ru.practicum.shareit.item.comment.CommentMapper;
+import ru.practicum.shareit.item.comment.CommentRepository;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.request.ItemRequestService;
@@ -29,6 +31,9 @@ public class ItemServiceImpl implements ItemService {
     private final BookingRepository bookingRepository;
     private final UserService userService;
     private final ItemRequestService itemRequestService;
+    private final ItemMapper itemMapper;
+    private final CommentMapper commentMapper;
+    private final CommentRepository commentRepository;
 
     @Override
     public List<Item> allItems() {
@@ -49,7 +54,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public Item createItem(Long userId, ItemDto itemDto) {
         User owner = userService.getUser(userId);
-        Item item = ItemMapper.toItemWithOwner(itemDto, owner);
+        Item item = itemMapper.toEntityWithOwner(itemDto, owner);
 
         if (itemDto.getRequestId() != null) {
             ItemRequest itemRequest = itemRequestService.findById(itemDto.getRequestId())
@@ -117,20 +122,11 @@ public class ItemServiceImpl implements ItemService {
         Item item = getItem(itemId);
         User author = userService.getUser(userId);
 
-        Comment comment = CommentMapper.toComment(commentDto);
-        comment.setItem(item);
-        comment.setAuthor(author);
-
-        return addComment(comment, userId);
-    }
-
-    @Override
-    public Comment addComment(Comment comment, Long userId) {
         List<Booking> bookings = bookingRepository.findByBookerId(userId);
         LocalDateTime now = LocalDateTime.now();
 
         boolean hasFinishedBooking = bookings.stream()
-                .anyMatch(b -> b.getItem().getId().equals(comment.getItem().getId()) &&
+                .anyMatch(b -> b.getItem().getId().equals(itemId) &&
                         b.getEnd().isBefore(now) &&
                         b.getStatus() == Status.APPROVED);
 
@@ -138,13 +134,12 @@ public class ItemServiceImpl implements ItemService {
             throw new IllegalArgumentException("Вы можете оставлять комментарии только к вещам, которые брали в аренду");
         }
 
+        Comment comment = commentMapper.toEntity(commentDto);
+        comment.setItem(item);
+        comment.setAuthor(author);
         comment.setCreated(now);
-        return itemRepository.saveComment(comment);
-    }
 
-    @Override
-    public List<Comment> getCommentsByItemId(Long itemId) {
-        return itemRepository.findCommentsByItemId(itemId);
+        return commentRepository.save(comment);
     }
 }
 

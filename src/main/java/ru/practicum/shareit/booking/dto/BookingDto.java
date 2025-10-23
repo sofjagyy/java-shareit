@@ -7,6 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.booking.Status;
+import ru.practicum.shareit.item.dto.ItemShortDto;
+import ru.practicum.shareit.user.dto.UserShortDto;
+import ru.practicum.shareit.validation.ValidationGroups;
 
 import java.time.LocalDateTime;
 
@@ -15,33 +18,15 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class BookingDto {
     private Long id;
-    @NotNull(groups = Create.class, message = "Дата начала не может быть null")
-    @FutureOrPresent(groups = Create.class, message = "Дата начала должна быть в настоящем или будущем")
+    @NotNull(groups = ValidationGroups.Create.class, message = "Дата начала не может быть null")
+    @FutureOrPresent(groups = ValidationGroups.Create.class, message = "Дата начала должна быть в настоящем или будущем")
     private LocalDateTime start;
-    @NotNull(groups = Create.class, message = "Дата окончания не может быть null")
-    @Future(groups = Create.class, message = "Дата окончания должна быть в будущем")
+    @NotNull(groups = ValidationGroups.Create.class, message = "Дата окончания не может быть null")
+    @Future(groups = ValidationGroups.Create.class, message = "Дата окончания должна быть в будущем")
     private LocalDateTime end;
-    @NotNull(groups = Create.class, message = "ID вещи не может быть null")
+    @NotNull(groups = ValidationGroups.Create.class, message = "ID вещи не может быть null")
     private Long itemId;
-    private BookerDto booker;
-    private ItemDto item;
+    private UserShortDto booker;
+    private ItemShortDto item;
     private Status status;
-
-    public interface Create {}
-
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class BookerDto {
-        private Long id;
-        private String name;
-    }
-
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class ItemDto {
-        private Long id;
-        private String name;
-    }
 }

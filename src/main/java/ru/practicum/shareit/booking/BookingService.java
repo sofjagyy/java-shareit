@@ -12,8 +12,8 @@ public interface BookingService {
 
     Optional<Booking> findById(Long id);
 
-    List<Booking> findByBookerId(Long bookerId, String state);
+    List<Booking> findByBookerId(Long bookerId, BookingState state);
 
-    List<Booking> findByOwnerId(Long ownerId, String state);
+    List<Booking> findByOwnerId(Long ownerId, BookingState state);
 }
 

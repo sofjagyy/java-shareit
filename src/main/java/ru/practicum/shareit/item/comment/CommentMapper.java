@@ -1,10 +1,16 @@
-package ru.practicum.shareit.item;
+package ru.practicum.shareit.item.comment;
 
-import ru.practicum.shareit.item.dto.CommentDto;
-import ru.practicum.shareit.item.model.Comment;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Component
+@RequiredArgsConstructor
 public class CommentMapper {
-    public static CommentDto toCommentDto(Comment comment) {
+    public CommentDto toDto(Comment comment) {
         if (comment == null) {
             return null;
         }
@@ -16,7 +22,16 @@ public class CommentMapper {
         );
     }
 
-    public static Comment toComment(CommentDto commentDto) {
+    public List<CommentDto> toDto(Collection<Comment> comments) {
+        if (comments == null) {
+            return null;
+        }
+        return comments.stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public Comment toEntity(CommentDto commentDto) {
         if (commentDto == null) {
             return null;
         }
