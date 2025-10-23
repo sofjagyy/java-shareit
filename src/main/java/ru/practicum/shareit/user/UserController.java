@@ -41,14 +41,14 @@ public class UserController {
                               @Validated(UserDto.Update.class) @RequestBody UserDto userDto) {
         User existingUser = userService.user(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
-        
+
         if (userDto.getName() != null) {
             existingUser.setName(userDto.getName());
         }
         if (userDto.getEmail() != null) {
             existingUser.setEmail(userDto.getEmail());
         }
-        
+
         return UserMapper.toDto(userService.save(existingUser));
     }
 

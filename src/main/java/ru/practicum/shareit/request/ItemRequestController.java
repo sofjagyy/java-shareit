@@ -35,7 +35,7 @@ public class ItemRequestController {
         return itemRequestService.findByRequestorId(userId).stream()
                 .map(request -> {
                     List<ItemDto> items = itemService.allItems().stream()
-                            .filter(item -> item.getRequest() != null && 
+                            .filter(item -> item.getRequest() != null &&
                                     item.getRequest().getId().equals(request.getId()))
                             .map(ItemMapper::toItemDto)
                             .collect(Collectors.toList());
@@ -49,7 +49,7 @@ public class ItemRequestController {
         return itemRequestService.findAllExceptUser(userId).stream()
                 .map(request -> {
                     List<ItemDto> items = itemService.allItems().stream()
-                            .filter(item -> item.getRequest() != null && 
+                            .filter(item -> item.getRequest() != null &&
                                     item.getRequest().getId().equals(request.getId()))
                             .map(ItemMapper::toItemDto)
                             .collect(Collectors.toList());
@@ -63,13 +63,13 @@ public class ItemRequestController {
                                       @PathVariable Long requestId) {
         ItemRequest itemRequest = itemRequestService.findById(requestId)
                 .orElseThrow(() -> new NotFoundException("Запрос не найден"));
-        
+
         List<ItemDto> items = itemService.allItems().stream()
-                .filter(item -> item.getRequest() != null && 
+                .filter(item -> item.getRequest() != null &&
                         item.getRequest().getId().equals(requestId))
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
-        
+
         return ItemRequestMapper.toItemRequestDto(itemRequest, items);
     }
 }

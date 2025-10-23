@@ -33,7 +33,7 @@ public class InMemoryItemRequestRepository implements ItemRequestRepository {
     @Override
     public List<ItemRequest> findByRequestorId(Long requestorId) {
         return requests.values().stream()
-                .filter(request -> request.getRequestor() != null && 
+                .filter(request -> request.getRequestor() != null &&
                         request.getRequestor().getId().equals(requestorId))
                 .sorted(Comparator.comparing(ItemRequest::getCreated).reversed())
                 .collect(Collectors.toList());

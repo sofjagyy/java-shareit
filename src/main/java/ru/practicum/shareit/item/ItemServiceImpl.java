@@ -54,16 +54,16 @@ public class ItemServiceImpl implements ItemService {
     public Comment addComment(Comment comment, Long userId) {
         List<Booking> bookings = bookingRepository.findByBookerId(userId);
         LocalDateTime now = LocalDateTime.now();
-        
+
         boolean hasFinishedBooking = bookings.stream()
                 .anyMatch(b -> b.getItem().getId().equals(comment.getItem().getId()) &&
                         b.getEnd().isBefore(now) &&
                         b.getStatus() == Status.APPROVED);
-        
+
         if (!hasFinishedBooking) {
             throw new IllegalArgumentException("Вы можете оставлять комментарии только к вещам, которые брали в аренду");
         }
-        
+
         comment.setCreated(now);
         return itemRepository.saveComment(comment);
     }

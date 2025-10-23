@@ -15,7 +15,6 @@ import ru.practicum.shareit.user.UserService;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-//test
 @SpringBootTest
 class ShareItTests {
 

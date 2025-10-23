@@ -24,10 +24,10 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     public ItemRequest create(ItemRequest itemRequest, Long requestorId) {
         User requestor = userService.user(requestorId)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
-        
+
         itemRequest.setRequestor(requestor);
         itemRequest.setCreated(LocalDateTime.now());
-        
+
         return itemRequestRepository.save(itemRequest);
     }
 

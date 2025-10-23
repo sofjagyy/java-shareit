@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @Repository
 @Component("InMemoryUserRepository")
-public class InMemoryUserRepository implements UserRepository{
+public class InMemoryUserRepository implements UserRepository {
     private final Map<Long, User> users = new ConcurrentHashMap<>();
     private final AtomicLong currentId = new AtomicLong(1L);
 

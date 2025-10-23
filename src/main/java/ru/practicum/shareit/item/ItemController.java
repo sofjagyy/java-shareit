@@ -46,13 +46,13 @@ public class ItemController {
         User owner = userService.user(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
         Item item = ItemMapper.toItemWithOwner(itemDto, owner);
-        
+
         if (itemDto.getRequestId() != null) {
             ItemRequest itemRequest = itemRequestService.findById(itemDto.getRequestId())
                     .orElseThrow(() -> new NotFoundException("Запрос вещи не найден"));
             item.setRequest(itemRequest);
         }
-        
+
         return ItemMapper.toItemDto(itemService.save(item));
     }
 
@@ -107,11 +107,11 @@ public class ItemController {
                 .orElseThrow(() -> new NotFoundException("Вещь не найдена"));
         User author = userService.user(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
-        
+
         Comment comment = CommentMapper.toComment(commentDto);
         comment.setItem(item);
         comment.setAuthor(author);
-        
+
         return CommentMapper.toCommentDto(itemService.addComment(comment, userId));
     }
 }

@@ -12,21 +12,21 @@ public class BookingMapper {
         dto.setStart(booking.getStart());
         dto.setEnd(booking.getEnd());
         dto.setStatus(booking.getStatus());
-        
+
         if (booking.getBooker() != null) {
             dto.setBooker(new BookingDto.BookerDto(
                     booking.getBooker().getId(),
                     booking.getBooker().getName()
             ));
         }
-        
+
         if (booking.getItem() != null) {
             dto.setItem(new BookingDto.ItemDto(
                     booking.getItem().getId(),
                     booking.getItem().getName()
             ));
         }
-        
+
         return dto;
     }
 

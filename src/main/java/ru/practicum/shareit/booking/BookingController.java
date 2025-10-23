@@ -39,12 +39,12 @@ public class BookingController {
                                   @PathVariable Long bookingId) {
         Booking booking = bookingService.findById(bookingId)
                 .orElseThrow(() -> new NotFoundException("Бронирование не найдено"));
-        
-        if (!booking.getBooker().getId().equals(userId) && 
+
+        if (!booking.getBooker().getId().equals(userId) &&
             !booking.getItem().getOwner().getId().equals(userId)) {
             throw new ForbiddenException("Доступ запрещен");
         }
-        
+
         return BookingMapper.toBookingDto(booking);
     }
 

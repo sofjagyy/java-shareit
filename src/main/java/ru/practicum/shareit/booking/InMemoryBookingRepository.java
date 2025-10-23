@@ -41,8 +41,8 @@ public class InMemoryBookingRepository implements BookingRepository {
     @Override
     public List<Booking> findByOwnerId(Long ownerId) {
         return bookings.values().stream()
-                .filter(booking -> booking.getItem() != null && 
-                        booking.getItem().getOwner() != null && 
+                .filter(booking -> booking.getItem() != null &&
+                        booking.getItem().getOwner() != null &&
                         booking.getItem().getOwner().getId().equals(ownerId))
                 .sorted(Comparator.comparing(Booking::getStart).reversed())
                 .collect(Collectors.toList());

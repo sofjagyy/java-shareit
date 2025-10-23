@@ -93,7 +93,7 @@ public class BookingServiceImpl implements BookingService {
 
     private List<Booking> filterByState(List<Booking> bookings, String state) {
         LocalDateTime now = LocalDateTime.now();
-        
+
         if (state == null || state.isBlank()) {
             state = "ALL";
         }

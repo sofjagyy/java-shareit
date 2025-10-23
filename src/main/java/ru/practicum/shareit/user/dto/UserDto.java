@@ -17,7 +17,11 @@ public class UserDto {
     @Email(groups = {Create.class, Update.class}, message = "Email должен быть корректным")
     private String email;
 
-    public interface Create {}
-    public interface Update {}
+    public interface Create {
+    }
+
+    public interface Update {
+    }
+
 }
 
