@@ -22,13 +22,18 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public ItemRequest create(ItemRequest itemRequest, Long requestorId) {
-        User requestor = userService.user(requestorId)
-                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+        User requestor = userService.getUser(requestorId);
 
         itemRequest.setRequestor(requestor);
         itemRequest.setCreated(LocalDateTime.now());
 
         return itemRequestRepository.save(itemRequest);
+    }
+
+    @Override
+    public ItemRequest getRequest(Long requestId) {
+        return itemRequestRepository.findById(requestId)
+                .orElseThrow(() -> new NotFoundException("Запрос не найден"));
     }
 
     @Override

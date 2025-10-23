@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 
 import java.util.Collection;
@@ -25,8 +24,7 @@ public class UserController {
 
     @GetMapping("/{userId}")
     public UserDto user(@PathVariable Long userId) {
-        return UserMapper.toDto(userService.user(userId)
-                .orElseThrow(() -> new NotFoundException("Пользователь не найден")));
+        return UserMapper.toDto(userService.getUser(userId));
     }
 
     @PostMapping
@@ -39,25 +37,14 @@ public class UserController {
     @PatchMapping("/{userId}")
     public UserDto updateUser(@PathVariable Long userId,
                               @Validated(UserDto.Update.class) @RequestBody UserDto userDto) {
-        User existingUser = userService.user(userId)
-                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
-
-        if (userDto.getName() != null) {
-            existingUser.setName(userDto.getName());
-        }
-        if (userDto.getEmail() != null) {
-            existingUser.setEmail(userDto.getEmail());
-        }
-
-        return UserMapper.toDto(userService.save(existingUser));
+        User userData = UserMapper.toEntity(userDto);
+        return UserMapper.toDto(userService.updateUser(userId, userData));
     }
 
     @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser(@PathVariable Long userId) {
-        User user = userService.user(userId)
-                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
-        userService.delete(user);
+        userService.deleteUser(userId);
     }
 }
 

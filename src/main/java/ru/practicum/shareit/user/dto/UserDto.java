@@ -22,6 +22,6 @@ public class UserDto {
 
     public interface Update {
     }
-
+    
 }
 

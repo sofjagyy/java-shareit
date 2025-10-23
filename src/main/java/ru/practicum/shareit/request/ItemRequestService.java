@@ -6,6 +6,8 @@ import java.util.Optional;
 public interface ItemRequestService {
     ItemRequest create(ItemRequest itemRequest, Long requestorId);
 
+    ItemRequest getRequest(Long requestId);
+
     Optional<ItemRequest> findById(Long id);
 
     List<ItemRequest> findByRequestorId(Long requestorId);

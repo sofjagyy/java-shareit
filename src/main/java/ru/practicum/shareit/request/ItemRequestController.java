@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -61,8 +60,7 @@ public class ItemRequestController {
     @GetMapping("/{requestId}")
     public ItemRequestDto getRequest(@RequestHeader("X-Sharer-User-Id") Long userId,
                                       @PathVariable Long requestId) {
-        ItemRequest itemRequest = itemRequestService.findById(requestId)
-                .orElseThrow(() -> new NotFoundException("Запрос не найден"));
+        ItemRequest itemRequest = itemRequestService.getRequest(requestId);
 
         List<ItemDto> items = itemService.allItems().stream()
                 .filter(item -> item.getRequest() != null &&

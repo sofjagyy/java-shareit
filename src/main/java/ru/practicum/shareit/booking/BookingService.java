@@ -8,6 +8,8 @@ public interface BookingService {
 
     Booking approve(Long bookingId, Long userId, Boolean approved);
 
+    Booking getBooking(Long bookingId, Long userId);
+
     Optional<Booking> findById(Long id);
 
     List<Booking> findByBookerId(Long bookerId, String state);

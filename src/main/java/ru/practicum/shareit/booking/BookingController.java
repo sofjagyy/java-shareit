@@ -5,8 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.exception.ForbiddenException;
-import ru.practicum.shareit.exception.NotFoundException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,14 +35,7 @@ public class BookingController {
     @GetMapping("/{bookingId}")
     public BookingDto getBooking(@RequestHeader("X-Sharer-User-Id") Long userId,
                                   @PathVariable Long bookingId) {
-        Booking booking = bookingService.findById(bookingId)
-                .orElseThrow(() -> new NotFoundException("Бронирование не найдено"));
-
-        if (!booking.getBooker().getId().equals(userId) &&
-            !booking.getItem().getOwner().getId().equals(userId)) {
-            throw new ForbiddenException("Доступ запрещен");
-        }
-
+        Booking booking = bookingService.getBooking(bookingId, userId);
         return BookingMapper.toBookingDto(booking);
     }
 
