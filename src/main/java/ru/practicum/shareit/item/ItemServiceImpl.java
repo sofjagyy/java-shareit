@@ -4,35 +4,32 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.ForbiddenException;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
+    private final ItemMapper itemMapper;
 
     @Override
     public ItemDto addItem(Long userId, ItemDto itemDto) {
-        User owner = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+        User owner = getUserById(userId);
 
-        Item item = ItemMapper.toItem(itemDto, owner, null);
+        Item item = itemMapper.toEntity(itemDto);
+        item.setOwner(owner);
         item = itemRepository.save(item);
 
-        return ItemMapper.toItemDto(item);
+        return itemMapper.toDto(item);
     }
 
     @Override
     public ItemDto updateItem(Long userId, Long itemId, ItemDto itemDto) {
-        Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new NotFoundException("Вещь не найдена"));
+        Item item = getItemByIdInternal(itemId);
 
         if (!item.getOwner().getId().equals(userId)) {
             throw new ForbiddenException("Пользователь не является владельцем");
@@ -48,30 +45,32 @@ public class ItemServiceImpl implements ItemService {
             item.setAvailable(itemDto.getAvailable());
         }
 
-        item = itemRepository.update(item);
-        return ItemMapper.toItemDto(item);
+        return itemMapper.toDto(itemRepository.update(item));
     }
 
     @Override
     public ItemDto getItemById(Long itemId) {
-        Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new NotFoundException("Вещь не найдена"));
-
-        return ItemMapper.toItemDto(item);
+        return itemMapper.toDto(getItemByIdInternal(itemId));
     }
 
     @Override
     public List<ItemDto> getItemsByOwner(Long userId) {
-        return itemRepository.findAllByOwnerId(userId).stream()
-                .map(ItemMapper::toItemDto)
-                .collect(Collectors.toList());
+        return itemMapper.toDto(itemRepository.findAllByOwnerId(userId));
     }
 
     @Override
     public List<ItemDto> searchItems(String text) {
-        return itemRepository.searchByText(text).stream()
-                .map(ItemMapper::toItemDto)
-                .collect(Collectors.toList());
+        return itemMapper.toDto(itemRepository.searchByText(text));
+    }
+
+    private User getUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+    }
+
+    private Item getItemByIdInternal(Long itemId) {
+        return itemRepository.findById(itemId)
+                .orElseThrow(() -> new NotFoundException("Вещь не найдена"));
     }
 }
 

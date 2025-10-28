@@ -7,22 +7,20 @@ import ru.practicum.shareit.exception.NotFoundException;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     @Override
     public UserDto createUser(UserDto userDto) {
-        if (userRepository.existsByEmail(userDto.getEmail())) {
+        if (userRepository.findByEmail(userDto.getEmail()).isPresent()) {
             throw new ConflictException("Электронная почта уже используется");
         }
 
-        User user = UserMapper.toUser(userDto);
-        user = userRepository.save(user);
-        return UserMapper.toUserDto(user);
+        return userMapper.toDto(userRepository.save(userMapper.toEntity(userDto)));
     }
 
     @Override
@@ -42,7 +40,7 @@ public class UserServiceImpl implements UserService {
         }
 
         user = userRepository.save(user);
-        return UserMapper.toUserDto(user);
+        return userMapper.toDto(user);
     }
 
     @Override
@@ -50,14 +48,12 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
 
-        return UserMapper.toUserDto(user);
+        return userMapper.toDto(user);
     }
 
     @Override
     public List<UserDto> getAllUsers() {
-        return userRepository.findAll().stream()
-                .map(UserMapper::toUserDto)
-                .collect(Collectors.toList());
+        return userMapper.toDto(userRepository.findAll());
     }
 
     @Override
