@@ -13,9 +13,9 @@ import java.lang.annotation.Target;
 @Constraint(validatedBy = BookingDatesValidator.class)
 public @interface ValidBookingDates {
     String message() default "Некорректные даты бронирования";
-    
+
     Class<?>[] groups() default {};
-    
+
     Class<? extends Payload>[] payload() default {};
 }
 

@@ -12,7 +12,7 @@ public interface ItemService {
     List<ItemWithBookingsDto> getItemsByOwner(Long userId);
 
     List<ItemDto> searchItems(String text);
-    
+
     CommentDto addComment(Long userId, Long itemId, CommentDto commentDto);
 }
 

@@ -75,7 +75,7 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new NotFoundException("Бронирование не найдено"));
 
-        if (!booking.getBooker().getId().equals(userId) && 
+        if (!booking.getBooker().getId().equals(userId) &&
             !booking.getItem().getOwner().getId().equals(userId)) {
             throw new ForbiddenException("Просмотр доступен только автору бронирования или владельцу вещи");
         }
@@ -103,7 +103,7 @@ public class BookingServiceImpl implements BookingService {
 
         switch (state) {
             case ALL:
-                bookings = isOwner 
+                bookings = isOwner
                         ? bookingRepository.findByItemOwnerId(userId, sort)
                         : bookingRepository.findByBookerId(userId, sort);
                 break;

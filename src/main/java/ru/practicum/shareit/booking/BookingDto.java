@@ -16,20 +16,20 @@ import java.time.LocalDateTime;
 @ValidBookingDates
 public class BookingDto {
     private Long id;
-    
+
     @NotNull
     private LocalDateTime start;
-    
+
     @NotNull
     private LocalDateTime end;
-    
+
     @NotNull
     private Long itemId;
-    
+
     private ItemDto item;
-    
+
     private UserDto booker;
-    
+
     private BookingStatus status;
 }
 
