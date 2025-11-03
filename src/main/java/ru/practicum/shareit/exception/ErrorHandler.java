@@ -34,6 +34,12 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorDto handleIllegalArgumentException(IllegalArgumentException e) {
+        return new ErrorDto(e.getMessage());
+    }
+
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorDto handleException(Exception e) {
         return new ErrorDto("Внутренняя ошибка сервера");
