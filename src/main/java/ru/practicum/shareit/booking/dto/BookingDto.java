@@ -1,11 +1,12 @@
-package ru.practicum.shareit.booking;
+package ru.practicum.shareit.booking.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.booking.validation.ValidBookingDates;
-import ru.practicum.shareit.item.ItemDto;
+import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.user.UserDto;
 
 import java.time.LocalDateTime;
@@ -32,4 +33,3 @@ public class BookingDto {
 
     private BookingStatus status;
 }
-

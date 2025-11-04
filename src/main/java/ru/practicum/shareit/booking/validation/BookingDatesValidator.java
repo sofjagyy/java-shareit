@@ -2,7 +2,7 @@ package ru.practicum.shareit.booking.validation;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import ru.practicum.shareit.booking.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingDto;
 
 import java.time.LocalDateTime;
 
@@ -39,4 +39,3 @@ public class BookingDatesValidator implements ConstraintValidator<ValidBookingDa
         return true;
     }
 }
-

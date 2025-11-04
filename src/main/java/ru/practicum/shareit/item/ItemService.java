@@ -1,5 +1,9 @@
 package ru.practicum.shareit.item;
 
+import ru.practicum.shareit.item.comments.CommentDto;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemWithBookingsDto;
+
 import java.util.List;
 
 public interface ItemService {
@@ -15,4 +19,3 @@ public interface ItemService {
 
     CommentDto addComment(Long userId, Long itemId, CommentDto commentDto);
 }
-

@@ -8,6 +8,12 @@ import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.exception.ForbiddenException;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.item.comments.Comment;
+import ru.practicum.shareit.item.comments.CommentDto;
+import ru.practicum.shareit.item.comments.CommentMapper;
+import ru.practicum.shareit.item.comments.CommentRepository;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemWithBookingsDto;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
@@ -142,7 +148,7 @@ public class ItemServiceImpl implements ItemService {
         Item item = getItem(itemId);
 
         LocalDateTime now = LocalDateTime.now();
-        List<Booking> completedBookings = bookingRepository.findByBookerIdAndItemIdAndStatusAndEndIsBefore(
+        List<Booking> completedBookings = bookingRepository.findByCreatorIdAndItemIdAndStatusAndEndIsBefore(
                 userId, itemId, BookingStatus.APPROVED, now
         );
 
@@ -171,4 +177,3 @@ public class ItemServiceImpl implements ItemService {
                 .orElseThrow(() -> new NotFoundException("Вещь не найдена"));
     }
 }
-

@@ -3,6 +3,12 @@ package ru.practicum.shareit.item;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import ru.practicum.shareit.booking.Booking;
+import ru.practicum.shareit.booking.dto.BookingShortDto;
+import ru.practicum.shareit.item.comments.Comment;
+import ru.practicum.shareit.item.comments.CommentDto;
+import ru.practicum.shareit.item.comments.CommentMapper;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemWithBookingsDto;
 
 import java.util.List;
 
@@ -36,13 +42,12 @@ public interface ItemMapper {
                 item.getRequest() != null ? item.getRequest().getId() : null,
                 toBookingShortDto(lastBooking),
                 toBookingShortDto(nextBooking),
-                toCommentDtos(comments)
+                commentListToCommentDtoList(comments)
         );
     }
 
-    @Mapping(target = "bookerId", source = "booker.id")
+    @Mapping(target = "bookerId", source = "creator.id")
     BookingShortDto toBookingShortDto(Booking booking);
 
-    List<CommentDto> toCommentDtos(List<Comment> comments);
+    List<CommentDto> commentListToCommentDtoList(List<Comment> comments);
 }
-

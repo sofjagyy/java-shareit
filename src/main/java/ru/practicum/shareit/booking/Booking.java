@@ -30,8 +30,8 @@ public class Booking {
     private Item item;
 
     @ManyToOne
-    @JoinColumn(name = "booker_id", nullable = false)
-    private User booker;
+    @JoinColumn(name = "creator_id", nullable = false)
+    private User creator;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)

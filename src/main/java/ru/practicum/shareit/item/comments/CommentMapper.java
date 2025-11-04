@@ -1,4 +1,4 @@
-package ru.practicum.shareit.item;
+package ru.practicum.shareit.item.comments;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -13,4 +13,3 @@ public interface CommentMapper {
 
     List<CommentDto> toDto(List<Comment> comments);
 }
-
