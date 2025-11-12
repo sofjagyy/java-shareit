@@ -14,14 +14,14 @@ public class BookingDatesValidator implements ConstraintValidator<ValidBookingDa
             return true;
         }
 
-        LocalDateTime start = bookingDto.getStart();
-        LocalDateTime end = bookingDto.getEnd();
+        LocalDateTime startDate = bookingDto.getStartDate();
+        LocalDateTime endDate = bookingDto.getEndDate();
 
-        if (start == null || end == null) {
+        if (startDate == null || endDate == null) {
             return true;
         }
 
-        if (start.isAfter(end) || start.equals(end)) {
+        if (startDate.isAfter(endDate) || startDate.equals(endDate)) {
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate("Дата начала должна быть раньше даты окончания")
                     .addConstraintViolation();
@@ -29,7 +29,7 @@ public class BookingDatesValidator implements ConstraintValidator<ValidBookingDa
         }
 
         LocalDateTime now = LocalDateTime.now();
-        if (start.isBefore(now)) {
+        if (startDate.isBefore(now)) {
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate("Дата начала не может быть в прошлом")
                     .addConstraintViolation();

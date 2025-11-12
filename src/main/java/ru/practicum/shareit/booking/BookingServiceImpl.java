@@ -82,7 +82,7 @@ public class BookingServiceImpl implements BookingService {
     public List<BookingDto> getBookingsByCreator(Long userId, BookingState state) {
         getUserById(userId);
 
-        Sort sort = Sort.by(Sort.Direction.DESC, "start");
+        Sort sort = Sort.by(Sort.Direction.DESC, "startDate");
         LocalDateTime now = LocalDateTime.now();
         List<Booking> bookings;
 
@@ -91,13 +91,13 @@ public class BookingServiceImpl implements BookingService {
                 bookings = bookingRepository.findByCreatorId(userId, sort);
                 break;
             case CURRENT:
-                bookings = bookingRepository.findByCreatorIdAndStartIsBeforeAndEndIsAfter(userId, now, now, sort);
+                bookings = bookingRepository.findByCreatorIdAndStartDateIsBeforeAndEndDateIsAfter(userId, now, now, sort);
                 break;
             case PAST:
-                bookings = bookingRepository.findByCreatorIdAndEndIsBefore(userId, now, sort);
+                bookings = bookingRepository.findByCreatorIdAndEndDateIsBefore(userId, now, sort);
                 break;
             case FUTURE:
-                bookings = bookingRepository.findByCreatorIdAndStartIsAfter(userId, now, sort);
+                bookings = bookingRepository.findByCreatorIdAndStartDateIsAfter(userId, now, sort);
                 break;
             case WAITING:
                 bookings = bookingRepository.findByCreatorIdAndStatus(userId, BookingStatus.WAITING, sort);
@@ -113,10 +113,10 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDto> getBookingsByOwner(Long userId, BookingState state) {
+    public List<BookingDto> getBookingsByItemOwner(Long userId, BookingState state) {
         getUserById(userId);
 
-        Sort sort = Sort.by(Sort.Direction.DESC, "start");
+        Sort sort = Sort.by(Sort.Direction.DESC, "startDate");
         LocalDateTime now = LocalDateTime.now();
         List<Booking> bookings;
 
@@ -125,13 +125,13 @@ public class BookingServiceImpl implements BookingService {
                 bookings = bookingRepository.findByItemOwnerId(userId, sort);
                 break;
             case CURRENT:
-                bookings = bookingRepository.findByItemOwnerIdAndStartIsBeforeAndEndIsAfter(userId, now, now, sort);
+                bookings = bookingRepository.findByItemOwnerIdAndStartDateIsBeforeAndEndDateIsAfter(userId, now, now, sort);
                 break;
             case PAST:
-                bookings = bookingRepository.findByItemOwnerIdAndEndIsBefore(userId, now, sort);
+                bookings = bookingRepository.findByItemOwnerIdAndEndDateIsBefore(userId, now, sort);
                 break;
             case FUTURE:
-                bookings = bookingRepository.findByItemOwnerIdAndStartIsAfter(userId, now, sort);
+                bookings = bookingRepository.findByItemOwnerIdAndStartDateIsAfter(userId, now, sort);
                 break;
             case WAITING:
                 bookings = bookingRepository.findByItemOwnerIdAndStatus(userId, BookingStatus.WAITING, sort);

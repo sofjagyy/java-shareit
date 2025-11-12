@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,5 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BookingShortDto {
     private Long id;
-    private Long bookerId;
+
+    @JsonProperty("bookerId")
+    private Long creatorId;
 }

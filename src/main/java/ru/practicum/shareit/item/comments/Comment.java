@@ -27,9 +27,9 @@ public class Comment {
     private Item item;
 
     @ManyToOne
-    @JoinColumn(name = "author_id", nullable = false)
-    private User author;
+    @JoinColumn(name = "creator_id", nullable = false)
+    private User creator;
 
-    @Column(name = "created", nullable = false)
-    private LocalDateTime created;
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
 }

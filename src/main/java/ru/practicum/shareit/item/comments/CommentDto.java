@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item.comments;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,7 +17,9 @@ public class CommentDto {
     @NotBlank
     private String text;
 
-    private String authorName;
+    @JsonProperty("authorName")
+    private String creatorName;
 
-    private LocalDateTime created;
+    @JsonProperty("created")
+    private LocalDateTime createdAt;
 }
