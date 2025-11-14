@@ -1,37 +1,28 @@
 package ru.practicum.shareit.item;
 
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemWithBookingsDto;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-@Component
-public class ItemMapper {
-    public ItemDto toDto(Item item) {
-        return new ItemDto(
-                item.getId(),
-                item.getName(),
-                item.getDescription(),
-                item.getAvailable(),
-                item.getRequest() != null ? item.getRequest().getId() : null
-        );
-    }
+@Mapper(componentModel = "spring")
+public interface ItemMapper {
 
-    public List<ItemDto> toDto(List<Item> items) {
-        return items.stream()
-                .map(this::toDto)
-                .collect(Collectors.toList());
-    }
+    @Mapping(target = "requestId", source = "request.id")
+    ItemDto toDto(Item item);
 
-    public Item toEntity(ItemDto dto) {
-        return new Item(
-                dto.getId(),
-                dto.getName(),
-                dto.getDescription(),
-                dto.getAvailable(),
-                null,
-                null
-        );
-    }
+    List<ItemDto> toDto(List<Item> items);
+
+    @Mapping(target = "owner", ignore = true)
+    @Mapping(target = "request", ignore = true)
+    @Mapping(target = "comments", ignore = true)
+    Item toEntity(ItemDto dto);
+
+    @Mapping(target = "requestId", source = "request.id")
+    @Mapping(target = "lastBooking", ignore = true)
+    @Mapping(target = "nextBooking", ignore = true)
+    @Mapping(target = "comments", ignore = true)
+    ItemWithBookingsDto toDtoWithBookings(Item item);
 }
-
