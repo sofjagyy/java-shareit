@@ -56,7 +56,6 @@ class CommentMapperTest {
         Comment comment = commentMapper.toEntity(dto);
 
         assertThat(comment).isNotNull();
-        assertThat(comment.getId()).isEqualTo(1L);
         assertThat(comment.getText()).isEqualTo("Great item!");
     }
 

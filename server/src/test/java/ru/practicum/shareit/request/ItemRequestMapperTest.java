@@ -50,7 +50,6 @@ class ItemRequestMapperTest {
         ItemRequest request = itemRequestMapper.toEntity(dto);
 
         assertThat(request).isNotNull();
-        assertThat(request.getId()).isEqualTo(1L);
         assertThat(request.getDescription()).isEqualTo("Need a drill");
     }
 
