@@ -153,5 +153,75 @@ class CommentServiceImplTest {
             commentService.addComment(newUserId, item.getId(), commentDto);
         });
     }
+
+    @Test
+    void addComment_whenBookingRejected_thenThrowIllegalArgumentException() {
+        User newUser = new User();
+        newUser.setName("Rejected User");
+        newUser.setEmail("rejected@example.com");
+        newUser = userRepository.save(newUser);
+
+        Booking rejectedBooking = new Booking();
+        rejectedBooking.setStartDate(LocalDateTime.now().minusDays(3));
+        rejectedBooking.setEndDate(LocalDateTime.now().minusDays(1));
+        rejectedBooking.setItem(item);
+        rejectedBooking.setCreator(newUser);
+        rejectedBooking.setStatus(BookingStatus.REJECTED);
+        bookingRepository.save(rejectedBooking);
+
+        CommentDto commentDto = new CommentDto();
+        commentDto.setText("Great item!");
+
+        Long newUserId = newUser.getId();
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            commentService.addComment(newUserId, item.getId(), commentDto);
+        });
+    }
+
+    @Test
+    void addComment_whenBookingWaiting_thenThrowIllegalArgumentException() {
+        User newUser = new User();
+        newUser.setName("Waiting User");
+        newUser.setEmail("waiting@example.com");
+        newUser = userRepository.save(newUser);
+
+        Booking waitingBooking = new Booking();
+        waitingBooking.setStartDate(LocalDateTime.now().minusDays(3));
+        waitingBooking.setEndDate(LocalDateTime.now().minusDays(1));
+        waitingBooking.setItem(item);
+        waitingBooking.setCreator(newUser);
+        waitingBooking.setStatus(BookingStatus.WAITING);
+        bookingRepository.save(waitingBooking);
+
+        CommentDto commentDto = new CommentDto();
+        commentDto.setText("Great item!");
+
+        Long newUserId = newUser.getId();
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            commentService.addComment(newUserId, item.getId(), commentDto);
+        });
+    }
+
+    @Test
+    void addComment_whenMultipleComments_thenAllCreated() {
+        CommentDto commentDto1 = new CommentDto();
+        commentDto1.setText("First comment!");
+
+        CommentDto createdComment1 = commentService.addComment(booker.getId(), item.getId(), commentDto1);
+
+        assertThat(createdComment1).isNotNull();
+        assertThat(createdComment1.getText()).isEqualTo("First comment!");
+
+        CommentDto commentDto2 = new CommentDto();
+        commentDto2.setText("Second comment!");
+
+        CommentDto createdComment2 = commentService.addComment(booker.getId(), item.getId(), commentDto2);
+
+        assertThat(createdComment2).isNotNull();
+        assertThat(createdComment2.getText()).isEqualTo("Second comment!");
+        assertThat(createdComment2.getId()).isNotEqualTo(createdComment1.getId());
+    }
 }
 

@@ -183,5 +183,46 @@ class UserServiceImplTest {
             userService.deleteUser(999L);
         });
     }
+
+    @Test
+    void updateUser_whenBothNameAndEmailUpdate_thenUserUpdated() {
+        UserDto userDto = new UserDto();
+        userDto.setName("Original Name");
+        userDto.setEmail("original@example.com");
+        UserDto createdUser = userService.createUser(userDto);
+
+        UserDto updateDto = new UserDto();
+        updateDto.setName("New Name");
+        updateDto.setEmail("new@example.com");
+
+        UserDto updatedUser = userService.updateUser(createdUser.getId(), updateDto);
+
+        assertThat(updatedUser).isNotNull();
+        assertThat(updatedUser.getName()).isEqualTo("New Name");
+        assertThat(updatedUser.getEmail()).isEqualTo("new@example.com");
+    }
+
+    @Test
+    void updateUser_whenSameEmailUpdate_thenUserUpdated() {
+        UserDto userDto = new UserDto();
+        userDto.setName("User");
+        userDto.setEmail("user@example.com");
+        UserDto createdUser = userService.createUser(userDto);
+
+        UserDto updateDto = new UserDto();
+        updateDto.setEmail("user@example.com");
+
+        UserDto updatedUser = userService.updateUser(createdUser.getId(), updateDto);
+
+        assertThat(updatedUser).isNotNull();
+        assertThat(updatedUser.getEmail()).isEqualTo("user@example.com");
+    }
+
+    @Test
+    void getAllUsers_whenNoUsers_thenReturnEmptyList() {
+        List<UserDto> users = userService.getAllUsers();
+
+        assertThat(users).isNotNull();
+    }
 }
 

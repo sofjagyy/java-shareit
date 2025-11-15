@@ -583,5 +583,31 @@ class BookingServiceImplTest {
             bookingService.getBookingsByItemOwner(999L, BookingState.ALL);
         });
     }
+
+    @Test
+    void getBookingsByCreator_whenNoBookings_thenReturnEmptyList() {
+        User newUser = new User();
+        newUser.setName("New User");
+        newUser.setEmail("newuser@example.com");
+        newUser = userRepository.save(newUser);
+
+        List<BookingDto> bookings = bookingService.getBookingsByCreator(newUser.getId(), BookingState.ALL);
+
+        assertThat(bookings).isNotNull();
+        assertThat(bookings).isEmpty();
+    }
+
+    @Test
+    void getBookingsByItemOwner_whenNoBookings_thenReturnEmptyList() {
+        User newOwner = new User();
+        newOwner.setName("New Owner");
+        newOwner.setEmail("newowner@example.com");
+        newOwner = userRepository.save(newOwner);
+
+        List<BookingDto> bookings = bookingService.getBookingsByItemOwner(newOwner.getId(), BookingState.ALL);
+
+        assertThat(bookings).isNotNull();
+        assertThat(bookings).isEmpty();
+    }
 }
 

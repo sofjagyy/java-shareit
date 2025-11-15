@@ -317,5 +317,37 @@ class ItemServiceImplTest {
             itemService.addItem(999L, itemDto);
         });
     }
+
+    @Test
+    void updateItem_whenAllFieldsUpdate_thenItemUpdated() {
+        ItemDto updateDto = new ItemDto();
+        updateDto.setName("Completely New Name");
+        updateDto.setDescription("Completely New Description");
+        updateDto.setAvailable(false);
+
+        ItemDto updatedItem = itemService.updateItem(owner.getId(), item1.getId(), updateDto);
+
+        assertThat(updatedItem).isNotNull();
+        assertThat(updatedItem.getName()).isEqualTo("Completely New Name");
+        assertThat(updatedItem.getDescription()).isEqualTo("Completely New Description");
+        assertThat(updatedItem.getAvailable()).isFalse();
+    }
+
+    @Test
+    void getItemById_whenItemHasNoBookings_thenReturnWithoutBookings() {
+        Item newItem = new Item();
+        newItem.setName("New Item");
+        newItem.setDescription("No bookings");
+        newItem.setAvailable(true);
+        newItem.setOwner(owner);
+        newItem = itemRepository.save(newItem);
+
+        ItemWithBookingsDto result = itemService.getItemById(owner.getId(), newItem.getId());
+
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isEqualTo(newItem.getId());
+        assertThat(result.getLastBooking()).isNull();
+        assertThat(result.getNextBooking()).isNull();
+    }
 }
 

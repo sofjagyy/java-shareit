@@ -191,5 +191,47 @@ class ItemRequestServiceImplTest {
         assertThat(requests).isNotNull();
         assertThat(requests).isEmpty();
     }
+
+    @Test
+    void createRequest_whenMultipleRequests_thenAllCreated() {
+        ItemRequestDto inputDto1 = new ItemRequestDto();
+        inputDto1.setDescription("Need a saw");
+
+        ItemRequestDto result1 = itemRequestService.createRequest(requester.getId(), inputDto1);
+
+        assertThat(result1).isNotNull();
+        assertThat(result1.getId()).isNotNull();
+        assertThat(result1.getDescription()).isEqualTo("Need a saw");
+
+        ItemRequestDto inputDto2 = new ItemRequestDto();
+        inputDto2.setDescription("Need a hammer");
+
+        ItemRequestDto result2 = itemRequestService.createRequest(requester.getId(), inputDto2);
+
+        assertThat(result2).isNotNull();
+        assertThat(result2.getId()).isNotNull();
+        assertThat(result2.getDescription()).isEqualTo("Need a hammer");
+        assertThat(result2.getId()).isNotEqualTo(result1.getId());
+    }
+
+    @Test
+    void getUserRequests_whenRequestsHaveNoItems_thenReturnRequestsWithEmptyItemsList() {
+        User newUser = new User();
+        newUser.setName("New Requester");
+        newUser.setEmail("newrequester@example.com");
+        newUser = userRepository.save(newUser);
+
+        ItemRequest request = new ItemRequest();
+        request.setDescription("Need something");
+        request.setCreator(newUser);
+        request.setCreatedAt(LocalDateTime.now());
+        itemRequestRepository.save(request);
+
+        List<ItemRequestDto> requests = itemRequestService.getUserRequests(newUser.getId());
+
+        assertThat(requests).isNotNull();
+        assertThat(requests).hasSize(1);
+        assertThat(requests.get(0).getItems()).isEmpty();
+    }
 }
 
