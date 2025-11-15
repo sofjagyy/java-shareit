@@ -555,5 +555,33 @@ class BookingServiceImplTest {
         assertThat(bookings).hasSize(1);
         assertThat(bookings.get(0).getStatus()).isEqualTo(BookingStatus.REJECTED);
     }
+
+    @Test
+    void getBookingById_whenBookingNotFound_thenThrowNotFoundException() {
+        assertThrows(NotFoundException.class, () -> {
+            bookingService.getBookingById(booker.getId(), 999L);
+        });
+    }
+
+    @Test
+    void approveBooking_whenBookingNotFound_thenThrowNotFoundException() {
+        assertThrows(NotFoundException.class, () -> {
+            bookingService.approveBooking(owner.getId(), 999L, true);
+        });
+    }
+
+    @Test
+    void getBookingsByCreator_whenUserNotFound_thenThrowNotFoundException() {
+        assertThrows(NotFoundException.class, () -> {
+            bookingService.getBookingsByCreator(999L, BookingState.ALL);
+        });
+    }
+
+    @Test
+    void getBookingsByItemOwner_whenUserNotFound_thenThrowNotFoundException() {
+        assertThrows(NotFoundException.class, () -> {
+            bookingService.getBookingsByItemOwner(999L, BookingState.ALL);
+        });
+    }
 }
 

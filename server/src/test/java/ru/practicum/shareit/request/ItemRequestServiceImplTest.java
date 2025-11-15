@@ -183,5 +183,13 @@ class ItemRequestServiceImplTest {
             itemRequestService.getRequestById(requester.getId(), 999L);
         });
     }
+
+    @Test
+    void getAllRequests_whenNoOtherUserRequests_thenReturnEmptyList() {
+        List<ItemRequestDto> requests = itemRequestService.getAllRequests(itemOwner.getId());
+
+        assertThat(requests).isNotNull();
+        assertThat(requests).isEmpty();
+    }
 }
 

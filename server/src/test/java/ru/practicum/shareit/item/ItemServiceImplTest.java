@@ -289,5 +289,33 @@ class ItemServiceImplTest {
         assertThat(items).isNotNull();
         assertThat(items).isEmpty();
     }
+
+    @Test
+    void searchItems_whenTextIsNull_thenReturnEmptyList() {
+        List<ItemDto> results = itemService.searchItems(null);
+
+        assertThat(results).isNotNull();
+        assertThat(results).isEmpty();
+    }
+
+    @Test
+    void searchItems_whenNoMatches_thenReturnEmptyList() {
+        List<ItemDto> results = itemService.searchItems("nonexistentitem12345");
+
+        assertThat(results).isNotNull();
+        assertThat(results).isEmpty();
+    }
+
+    @Test
+    void addItem_whenUserNotFound_thenThrowNotFoundException() {
+        ItemDto itemDto = new ItemDto();
+        itemDto.setName("New Item");
+        itemDto.setDescription("Description");
+        itemDto.setAvailable(true);
+
+        assertThrows(NotFoundException.class, () -> {
+            itemService.addItem(999L, itemDto);
+        });
+    }
 }
 
