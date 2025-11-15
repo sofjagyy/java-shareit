@@ -17,6 +17,8 @@ import ru.practicum.shareit.user.UserRepository;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import ru.practicum.shareit.exception.NotFoundException;
 
 @SpringBootTest
 @Transactional
@@ -88,6 +90,68 @@ class CommentServiceImplTest {
         assertThat(commentInDb.getText()).isEqualTo("Great item!");
         assertThat(commentInDb.getCreator().getId()).isEqualTo(booker.getId());
         assertThat(commentInDb.getItem().getId()).isEqualTo(item.getId());
+    }
+
+    @Test
+    void addComment_whenUserNotFound_thenThrowNotFoundException() {
+        CommentDto commentDto = new CommentDto();
+        commentDto.setText("Great item!");
+
+        assertThrows(NotFoundException.class, () -> {
+            commentService.addComment(999L, item.getId(), commentDto);
+        });
+    }
+
+    @Test
+    void addComment_whenItemNotFound_thenThrowNotFoundException() {
+        CommentDto commentDto = new CommentDto();
+        commentDto.setText("Great item!");
+
+        assertThrows(NotFoundException.class, () -> {
+            commentService.addComment(booker.getId(), 999L, commentDto);
+        });
+    }
+
+    @Test
+    void addComment_whenNoCompletedBooking_thenThrowIllegalArgumentException() {
+        User newUser = new User();
+        newUser.setName("New User");
+        newUser.setEmail("newuser@example.com");
+        newUser = userRepository.save(newUser);
+
+        CommentDto commentDto = new CommentDto();
+        commentDto.setText("Great item!");
+
+        Long newUserId = newUser.getId();
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            commentService.addComment(newUserId, item.getId(), commentDto);
+        });
+    }
+
+    @Test
+    void addComment_whenBookingNotCompleted_thenThrowIllegalArgumentException() {
+        User newUser = new User();
+        newUser.setName("New User");
+        newUser.setEmail("newuser2@example.com");
+        newUser = userRepository.save(newUser);
+
+        Booking futureBooking = new Booking();
+        futureBooking.setStartDate(LocalDateTime.now().plusDays(1));
+        futureBooking.setEndDate(LocalDateTime.now().plusDays(2));
+        futureBooking.setItem(item);
+        futureBooking.setCreator(newUser);
+        futureBooking.setStatus(BookingStatus.APPROVED);
+        bookingRepository.save(futureBooking);
+
+        CommentDto commentDto = new CommentDto();
+        commentDto.setText("Great item!");
+
+        Long newUserId = newUser.getId();
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            commentService.addComment(newUserId, item.getId(), commentDto);
+        });
     }
 }
 

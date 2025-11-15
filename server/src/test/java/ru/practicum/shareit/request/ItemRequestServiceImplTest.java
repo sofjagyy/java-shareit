@@ -11,10 +11,13 @@ import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
+import ru.practicum.shareit.exception.NotFoundException;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @Transactional
@@ -141,6 +144,44 @@ class ItemRequestServiceImplTest {
 
         assertThat(requests).isNotNull();
         assertThat(requests).isEmpty();
+    }
+
+    @Test
+    void createRequest_whenUserNotFound_thenThrowNotFoundException() {
+        ItemRequestDto inputDto = new ItemRequestDto();
+        inputDto.setDescription("Need something");
+
+        assertThrows(NotFoundException.class, () -> {
+            itemRequestService.createRequest(999L, inputDto);
+        });
+    }
+
+    @Test
+    void getUserRequests_whenUserNotFound_thenThrowNotFoundException() {
+        assertThrows(NotFoundException.class, () -> {
+            itemRequestService.getUserRequests(999L);
+        });
+    }
+
+    @Test
+    void getAllRequests_whenUserNotFound_thenThrowNotFoundException() {
+        assertThrows(NotFoundException.class, () -> {
+            itemRequestService.getAllRequests(999L);
+        });
+    }
+
+    @Test
+    void getRequestById_whenUserNotFound_thenThrowNotFoundException() {
+        assertThrows(NotFoundException.class, () -> {
+            itemRequestService.getRequestById(999L, request1.getId());
+        });
+    }
+
+    @Test
+    void getRequestById_whenRequestNotFound_thenThrowNotFoundException() {
+        assertThrows(NotFoundException.class, () -> {
+            itemRequestService.getRequestById(requester.getId(), 999L);
+        });
     }
 }
 

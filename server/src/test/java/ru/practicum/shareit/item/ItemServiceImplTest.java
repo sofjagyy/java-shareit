@@ -16,10 +16,14 @@ import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
+import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.ForbiddenException;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @Transactional
@@ -160,6 +164,130 @@ class ItemServiceImplTest {
         assertThat(result.getId()).isNotNull();
         assertThat(result.getName()).isEqualTo("Tool");
         assertThat(result.getRequestId()).isEqualTo(request.getId());
+    }
+
+    @Test
+    void addItem_whenRequestIdNotFound_thenThrowNotFoundException() {
+        ItemDto itemDto = new ItemDto();
+        itemDto.setName("Tool");
+        itemDto.setDescription("Requested tool");
+        itemDto.setAvailable(true);
+        itemDto.setRequestId(999L);
+
+        assertThrows(NotFoundException.class, () -> {
+            itemService.addItem(owner.getId(), itemDto);
+        });
+    }
+
+    @Test
+    void updateItem_whenValidNameUpdate_thenItemUpdated() {
+        ItemDto updateDto = new ItemDto();
+        updateDto.setName("Updated Name");
+
+        ItemDto updatedItem = itemService.updateItem(owner.getId(), item1.getId(), updateDto);
+
+        assertThat(updatedItem).isNotNull();
+        assertThat(updatedItem.getName()).isEqualTo("Updated Name");
+        assertThat(updatedItem.getDescription()).isEqualTo("Description 1");
+    }
+
+    @Test
+    void updateItem_whenValidDescriptionUpdate_thenItemUpdated() {
+        ItemDto updateDto = new ItemDto();
+        updateDto.setDescription("Updated Description");
+
+        ItemDto updatedItem = itemService.updateItem(owner.getId(), item1.getId(), updateDto);
+
+        assertThat(updatedItem).isNotNull();
+        assertThat(updatedItem.getName()).isEqualTo("Item 1");
+        assertThat(updatedItem.getDescription()).isEqualTo("Updated Description");
+    }
+
+    @Test
+    void updateItem_whenValidAvailableUpdate_thenItemUpdated() {
+        ItemDto updateDto = new ItemDto();
+        updateDto.setAvailable(false);
+
+        ItemDto updatedItem = itemService.updateItem(owner.getId(), item1.getId(), updateDto);
+
+        assertThat(updatedItem).isNotNull();
+        assertThat(updatedItem.getAvailable()).isFalse();
+    }
+
+    @Test
+    void updateItem_whenNotOwner_thenThrowForbiddenException() {
+        ItemDto updateDto = new ItemDto();
+        updateDto.setName("Updated Name");
+
+        assertThrows(ForbiddenException.class, () -> {
+            itemService.updateItem(booker.getId(), item1.getId(), updateDto);
+        });
+    }
+
+    @Test
+    void updateItem_whenItemNotFound_thenThrowNotFoundException() {
+        ItemDto updateDto = new ItemDto();
+        updateDto.setName("Updated Name");
+
+        assertThrows(NotFoundException.class, () -> {
+            itemService.updateItem(owner.getId(), 999L, updateDto);
+        });
+    }
+
+    @Test
+    void getItemById_whenOwnerRequests_thenReturnWithBookings() {
+        ItemWithBookingsDto result = itemService.getItemById(owner.getId(), item1.getId());
+
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isEqualTo(item1.getId());
+        assertThat(result.getLastBooking()).isNotNull();
+        assertThat(result.getNextBooking()).isNotNull();
+    }
+
+    @Test
+    void getItemById_whenOtherUserRequests_thenReturnWithoutBookings() {
+        ItemWithBookingsDto result = itemService.getItemById(booker.getId(), item1.getId());
+
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isEqualTo(item1.getId());
+        assertThat(result.getLastBooking()).isNull();
+        assertThat(result.getNextBooking()).isNull();
+    }
+
+    @Test
+    void getItemById_whenItemNotFound_thenThrowNotFoundException() {
+        assertThrows(NotFoundException.class, () -> {
+            itemService.getItemById(owner.getId(), 999L);
+        });
+    }
+
+    @Test
+    void searchItems_whenTextIsBlank_thenReturnEmptyList() {
+        List<ItemDto> results = itemService.searchItems("");
+
+        assertThat(results).isNotNull();
+        assertThat(results).isEmpty();
+    }
+
+    @Test
+    void searchItems_whenTextMatches_thenReturnMatchingItems() {
+        List<ItemDto> results = itemService.searchItems("Item");
+
+        assertThat(results).isNotNull();
+        assertThat(results).hasSizeGreaterThanOrEqualTo(1);
+    }
+
+    @Test
+    void getItemsByOwner_whenOwnerHasNoItems_thenReturnEmptyList() {
+        User newOwner = new User();
+        newOwner.setName("New Owner");
+        newOwner.setEmail("newowner@example.com");
+        newOwner = userRepository.save(newOwner);
+
+        List<ItemWithBookingsDto> items = itemService.getItemsByOwner(newOwner.getId());
+
+        assertThat(items).isNotNull();
+        assertThat(items).isEmpty();
     }
 }
 
