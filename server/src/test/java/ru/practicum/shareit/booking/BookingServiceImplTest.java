@@ -609,5 +609,39 @@ class BookingServiceImplTest {
         assertThat(bookings).isNotNull();
         assertThat(bookings).isEmpty();
     }
+
+    @Test
+    void createBooking_whenStartInPast_thenStillCreated() {
+        LocalDateTime start = LocalDateTime.now().minusDays(1);
+        LocalDateTime end = LocalDateTime.now().plusDays(1);
+
+        BookingDto bookingDto = new BookingDto();
+        bookingDto.setItemId(item.getId());
+        bookingDto.setStartDate(start);
+        bookingDto.setEndDate(end);
+
+        BookingDto createdBooking = bookingService.createBooking(booker.getId(), bookingDto);
+
+        assertThat(createdBooking).isNotNull();
+        assertThat(createdBooking.getStatus()).isEqualTo(BookingStatus.WAITING);
+    }
+
+    @Test
+    void approveBooking_whenOwnerApprovesMultipleTimes_thenOnlyFirstSucceeds() {
+        LocalDateTime start = LocalDateTime.now().plusDays(1);
+        LocalDateTime end = LocalDateTime.now().plusDays(2);
+
+        BookingDto bookingDto = new BookingDto();
+        bookingDto.setItemId(item.getId());
+        bookingDto.setStartDate(start);
+        bookingDto.setEndDate(end);
+
+        BookingDto createdBooking = bookingService.createBooking(booker.getId(), bookingDto);
+        bookingService.approveBooking(owner.getId(), createdBooking.getId(), true);
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            bookingService.approveBooking(owner.getId(), createdBooking.getId(), false);
+        });
+    }
 }
 
