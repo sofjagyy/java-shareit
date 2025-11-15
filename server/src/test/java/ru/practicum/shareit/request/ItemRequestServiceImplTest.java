@@ -186,7 +186,7 @@ class ItemRequestServiceImplTest {
 
     @Test
     void getAllRequests_whenNoOtherUserRequests_thenReturnEmptyList() {
-        List<ItemRequestDto> requests = itemRequestService.getAllRequests(itemOwner.getId());
+        List<ItemRequestDto> requests = itemRequestService.getAllRequests(requester.getId());
 
         assertThat(requests).isNotNull();
         assertThat(requests).isEmpty();
