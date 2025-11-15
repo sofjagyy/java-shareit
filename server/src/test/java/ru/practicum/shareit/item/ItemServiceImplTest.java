@@ -9,7 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.BookingStatus;
+import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemWithBookingsDto;
+import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
@@ -34,6 +37,9 @@ class ItemServiceImplTest {
 
     @Autowired
     private BookingRepository bookingRepository;
+
+    @Autowired
+    private ItemRequestRepository itemRequestRepository;
 
     private User owner;
     private User booker;
@@ -115,6 +121,45 @@ class ItemServiceImplTest {
         assertThat(item2Dto.getName()).isEqualTo("Item 2");
         assertThat(item2Dto.getLastBooking()).isNull();
         assertThat(item2Dto.getNextBooking()).isNull();
+    }
+
+    @Test
+    void addItem_whenValidDataWithoutRequest_thenItemCreated() {
+        ItemDto itemDto = new ItemDto();
+        itemDto.setName("New Item");
+        itemDto.setDescription("New Description");
+        itemDto.setAvailable(true);
+
+        ItemDto result = itemService.addItem(owner.getId(), itemDto);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isNotNull();
+        assertThat(result.getName()).isEqualTo("New Item");
+        assertThat(result.getDescription()).isEqualTo("New Description");
+        assertThat(result.getAvailable()).isTrue();
+        assertThat(result.getRequestId()).isNull();
+    }
+
+    @Test
+    void addItem_whenValidDataWithRequest_thenItemCreatedWithRequestLink() {
+        ItemRequest request = new ItemRequest();
+        request.setDescription("Need a tool");
+        request.setCreator(booker);
+        request.setCreatedAt(LocalDateTime.now());
+        request = itemRequestRepository.save(request);
+
+        ItemDto itemDto = new ItemDto();
+        itemDto.setName("Tool");
+        itemDto.setDescription("Requested tool");
+        itemDto.setAvailable(true);
+        itemDto.setRequestId(request.getId());
+
+        ItemDto result = itemService.addItem(owner.getId(), itemDto);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isNotNull();
+        assertThat(result.getName()).isEqualTo("Tool");
+        assertThat(result.getRequestId()).isEqualTo(request.getId());
     }
 }
 

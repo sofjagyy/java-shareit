@@ -80,6 +80,19 @@ class ItemRequestServiceImplTest {
     }
 
     @Test
+    void createRequest_whenValidData_thenRequestCreated() {
+        ItemRequestDto inputDto = new ItemRequestDto();
+        inputDto.setDescription("Need a hammer");
+
+        ItemRequestDto result = itemRequestService.createRequest(requester.getId(), inputDto);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isNotNull();
+        assertThat(result.getDescription()).isEqualTo("Need a hammer");
+        assertThat(result.getCreated()).isNotNull();
+    }
+
+    @Test
     void getUserRequests_whenUserHasRequests_thenReturnRequestsWithItems() {
         List<ItemRequestDto> requests = itemRequestService.getUserRequests(requester.getId());
 
@@ -95,6 +108,39 @@ class ItemRequestServiceImplTest {
         assertThat(secondRequest.getItems()).hasSize(2);
         assertThat(secondRequest.getItems().get(0).getName()).isIn("Electric Drill", "Another Drill");
         assertThat(secondRequest.getItems().get(1).getName()).isIn("Electric Drill", "Another Drill");
+    }
+
+    @Test
+    void getAllRequests_whenOtherUsersHaveRequests_thenReturnThoseRequests() {
+        ItemRequest request3 = new ItemRequest();
+        request3.setDescription("Need a saw");
+        request3.setCreator(itemOwner);
+        request3.setCreatedAt(LocalDateTime.now());
+        itemRequestRepository.save(request3);
+
+        List<ItemRequestDto> requests = itemRequestService.getAllRequests(requester.getId());
+
+        assertThat(requests).isNotNull();
+        assertThat(requests).hasSize(1);
+        assertThat(requests.get(0).getDescription()).isEqualTo("Need a saw");
+    }
+
+    @Test
+    void getRequestById_whenRequestExists_thenReturnRequestWithItems() {
+        ItemRequestDto result = itemRequestService.getRequestById(requester.getId(), request1.getId());
+
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isEqualTo(request1.getId());
+        assertThat(result.getDescription()).isEqualTo("Need a drill");
+        assertThat(result.getItems()).hasSize(2);
+    }
+
+    @Test
+    void getUserRequests_whenUserHasNoRequests_thenReturnEmptyList() {
+        List<ItemRequestDto> requests = itemRequestService.getUserRequests(itemOwner.getId());
+
+        assertThat(requests).isNotNull();
+        assertThat(requests).isEmpty();
     }
 }
 
