@@ -32,13 +32,11 @@ class BookItemRequestDtoJsonTest {
 
     @Test
     void testDeserialize() throws Exception {
-        String content = """
-                {
-                    "itemId": 1,
-                    "start": "2024-12-01T10:00:00",
-                    "end": "2024-12-02T10:00:00"
-                }
-                """;
+        String content = "{"
+                + "\"itemId\": 1,"
+                + "\"start\": \"2024-12-01T10:00:00\","
+                + "\"end\": \"2024-12-02T10:00:00\""
+                + "}";
 
         BookItemRequestDto result = json.parse(content).getObject();
 
