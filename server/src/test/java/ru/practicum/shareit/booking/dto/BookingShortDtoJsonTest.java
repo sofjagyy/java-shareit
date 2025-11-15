@@ -28,12 +28,10 @@ class BookingShortDtoJsonTest {
 
     @Test
     void testDeserialize() throws Exception {
-        String content = """
-                {
-                    "id": 1,
-                    "bookerId": 2
-                }
-                """;
+        String content = "{"
+                + "\"id\": 1,"
+                + "\"bookerId\": 2"
+                + "}";
 
         BookingShortDto result = json.parse(content).getObject();
 
